@@ -63,17 +63,19 @@
     <section id="hero" class="hero-section">
       <div class="container hero-layout">
         <div class="hero-copy">
-          <div class="hero-tag" data-i18n="hero-tag">Disponible para prácticas · Backend / Fullstack · Almería o remoto</div>
+          <div class="hero-tag" data-i18n="hero-tag">En busca de nuevas oportunidades · Backend / Fullstack · Almería o remoto</div>
           <h1 class="hero-name">Javier<br />Campuzano</h1>
-          <p class="hero-role" data-i18n="hero-role">Ingeniero Informático en formación con foco en backend, arquitectura de software y cloud.</p>
+          <p class="hero-role" data-i18n="hero-role">Especialidad en Ingeniería del Software y Tecnologías de la Información. Perfil orientado a backend, arquitectura de software y cloud.</p>
           <p class="hero-desc" data-i18n="hero-desc">
             Desarrollo APIs, herramientas y productos fullstack con especial interés en Java, Spring Boot, testing,
-            diseño de sistemas y buenas prácticas de ingeniería.
+            diseño de sistemas y buenas prácticas de ingeniería. Experiencia en hackathons, proyectos académicos y
+            desarrollo de soluciones con foco técnico real.
           </p>
           <div class="hero-points">
-            <span class="hero-point" data-i18n="hero-point-1">Prácticas 2026-2027</span>
+            <span class="hero-point" data-i18n="hero-point-1">Especialidad: IS & TI</span>
             <span class="hero-point" data-i18n="hero-point-2">Java · Spring Boot · Python</span>
-            <span class="hero-point" data-i18n="hero-point-3">Testing · Arquitectura · Cloud</span>
+            <span class="hero-point" data-i18n="hero-point-3">Hackathons · Testing · Arquitectura · Cloud</span>
+            <span class="hero-point" data-i18n="hero-point-4">Open source · APIs · Producto</span>
           </div>
           <div class="hero-cta">
             <a href="#projects" class="btn-primary" data-i18n="hero-btn-projects">Ver proyectos</a>
@@ -81,21 +83,6 @@
             <a href="#contact" class="btn-ghost" data-i18n="hero-btn-contact">Contactar</a>
           </div>
         </div>
-        <aside class="hero-panel reveal">
-          <div class="hero-panel-card">
-            <div class="panel-label" data-i18n="hero-panel-title">Ahora mismo</div>
-            <h2 class="panel-title" data-i18n="hero-panel-heading">Buscando prácticas donde pueda aportar en backend, calidad y producto.</h2>
-            <p class="panel-text" data-i18n="hero-panel-text">
-              Me interesa entrar en equipos donde pueda aprender de arquitectura, testing, despliegue y desarrollo de
-              software real con impacto.
-            </p>
-            <ul class="panel-list">
-              <li data-i18n="hero-panel-item-1">Especialidad: Ingeniería del Software y Tecnologías de la Información</li>
-              <li data-i18n="hero-panel-item-2">Nota media actual: 8.2</li>
-              <li data-i18n="hero-panel-item-3">Experiencia en hackathons, proyectos académicos y open source</li>
-            </ul>
-          </div>
-        </aside>
       </div>
       <div class="scroll-hint" data-i18n="hero-scroll">Seguir bajando</div>
     </section>
@@ -111,7 +98,7 @@
           <div class="about-text reveal">
             <p data-i18n-html="about-p1">Soy estudiante de 3.º de Ingeniería Informática en la Universidad de Almería, con especialización en <strong>Ingeniería del Software y Tecnologías de la Información</strong>.</p>
             <p data-i18n="about-p2">Disfruto trabajando en backend, diseño de APIs, arquitectura limpia, testing y herramientas que mejoran la calidad del software. También me siento cómodo conectando la parte técnica con la experiencia de usuario y el trabajo en equipo.</p>
-            <p data-i18n="about-p3">Busco una oportunidad de prácticas donde seguir creciendo con proyectos reales, revisión de código, despliegues y buenas decisiones de ingeniería.</p>
+            <p data-i18n="about-p3">Estoy en busca de nuevas oportunidades donde seguir creciendo con proyectos reales, revisión de código, despliegues y buenas decisiones de ingeniería.</p>
             <ul class="info-list">
               <li><span data-i18n="info-name">Nombre</span><span>Javier Campuzano Campuzano</span></li>
               <li><span>Email</span><span><a href="mailto:jcg219@inlumine.ual.es">jcg219@inlumine.ual.es</a></span></li>
@@ -295,7 +282,7 @@
             <div class="timeline-dot"></div>
             <div class="timeline-date">2022</div>
             <div class="timeline-title" data-i18n="edu-hs">Bachillerato Científico-Tecnológico</div>
-            <div class="timeline-sub">IES Portocarrero · Almería</div>
+            <div class="timeline-sub">IES Sol de Portocarrero · Almería</div>
             <div class="timeline-body" data-i18n="edu-desc4">Graduado con nota de corte 11.2 en EBAU y Diploma de Honor de Bachillerato.</div>
             <div class="badge-row">
               <span class="badge">EBAU 11.2</span>
@@ -310,78 +297,25 @@
       <div class="container">
         <div class="section-header reveal">
           <div class="section-num" data-i18n="proj-num">04 // PROYECTOS</div>
-          <h2 class="section-title" data-i18n="proj-title">Proyectos destacados</h2>
+          <h2 class="section-title" data-i18n="proj-title">Proyectos destacados desde GitHub</h2>
           <div class="section-line"></div>
-          <p class="section-intro" data-i18n="proj-intro">Una selección de proyectos donde he trabajado arquitectura, backend, automatización, testing y producto.</p>
-        </div>
-        <div class="projects-grid">
-          <article class="project-card reveal">
-            <span class="project-status status-active" data-i18n="proj-dev">En desarrollo</span>
-            <h3 class="project-title" data-i18n="proj-1">DevCollab — Plataforma de proyectos colaborativos</h3>
-            <p class="project-desc" data-i18n="proj-desc1">Aplicación fullstack para conectar estudiantes y desarrolladores alrededor de proyectos open source y colaborativos.</p>
-            <p class="project-proof" data-i18n="proj-proof1">JWT, roles, peticiones y chat en tiempo real con WebSockets. Enfoque en backend, flujos de usuario y escalabilidad.</p>
-            <div class="project-tech">
-              <span class="tech-tag">Spring Boot</span>
-              <span class="tech-tag">React</span>
-              <span class="tech-tag">PostgreSQL</span>
-              <span class="tech-tag">WebSocket</span>
-              <span class="tech-tag">Docker</span>
-              <span class="tech-tag">JWT</span>
-            </div>
-          </article>
-
-          <article class="project-card reveal">
-            <span class="project-status status-completed" data-i18n="proj-done">Completado</span>
-            <h3 class="project-title" data-i18n="proj-2">SmartSched — Sistema de gestión de horarios</h3>
-            <p class="project-desc" data-i18n="proj-desc2">API REST para la gestión automatizada de horarios académicos con detección de conflictos.</p>
-            <p class="project-proof" data-i18n="proj-proof2">Proyecto centrado en arquitectura hexagonal, UML, TDD y cobertura del 85%. Especialmente relevante para backend y calidad de código.</p>
-            <div class="project-tech">
-              <span class="tech-tag">Java 17</span>
-              <span class="tech-tag">Spring</span>
-              <span class="tech-tag">JUnit 5</span>
-              <span class="tech-tag">Mockito</span>
-              <span class="tech-tag">MySQL</span>
-              <span class="tech-tag">Swagger</span>
-            </div>
-          </article>
-
-          <article class="project-card reveal">
-            <span class="project-status status-completed" data-i18n="proj-done">Completado</span>
-            <h3 class="project-title" data-i18n="proj-3">CryptoTrack CLI — Monitor de criptomonedas</h3>
-            <p class="project-desc" data-i18n="proj-desc3">Herramienta de terminal en Python para consultar mercados, mostrar gráficos ASCII y exportar datos.</p>
-            <p class="project-proof" data-i18n="proj-proof3">Diseñado como herramienta usable desde CLI con APIs externas, alertas configurables y publicación en PyPI.</p>
-            <div class="project-tech">
-              <span class="tech-tag">Python</span>
-              <span class="tech-tag">Click</span>
-              <span class="tech-tag">REST APIs</span>
-              <span class="tech-tag">PyPI</span>
-              <span class="tech-tag">Rich</span>
-            </div>
-          </article>
-
-          <article class="project-card reveal">
-            <span class="project-status status-planned" data-i18n="proj-soon">En prototipado</span>
-            <h3 class="project-title" data-i18n="proj-4">NoteAI — Asistente de apuntes con IA</h3>
-            <p class="project-desc" data-i18n="proj-desc4">Aplicación para procesar PDFs académicos y generar resúmenes, flashcards y cuestionarios.</p>
-            <p class="project-proof" data-i18n="proj-proof4">Proyecto orientado a arquitectura y producto, combinando procesamiento de documentos, LLMs y experiencia de usuario.</p>
-            <div class="project-tech">
-              <span class="tech-tag">Python</span>
-              <span class="tech-tag">FastAPI</span>
-              <span class="tech-tag">OpenAI API</span>
-              <span class="tech-tag">Next.js</span>
-            </div>
-          </article>
-        </div>
-
-        <div class="section-header reveal section-header-spaced">
-          <div class="section-num" data-i18n="git-num">04.1 // GITHUB</div>
-          <h2 class="section-title" data-i18n="git-title">Repositorios públicos seleccionados</h2>
-          <div class="section-line"></div>
-          <p class="section-intro" data-i18n="git-intro">Cargo sólo los repositorios más relevantes para mantener esta sección útil y enfocada.</p>
+          <p class="section-intro" data-i18n="proj-intro">Esta sección se construye desde mis repositorios. Cada tarjeta puede mostrar resumen, tecnologías clave y estado a partir del README, las releases y un override manual cuando haga falta.</p>
         </div>
         <div id="github-projects" class="projects-grid">
           <div class="github-loading" data-i18n="git-load">Cargando repositorios de GitHub...</div>
         </div>
+        <!-- Override manual por repositorio.
+             status: "in-progress" | "completed" | "production"
+             statusLabelEs / statusLabelEn: opcionales
+             featured: true para forzar que salga si estás usando selección manual en JS
+        -->
+        <script id="project-overrides" type="application/json">
+          {
+            "websiteLaVozDeMiLinaje2026": {
+              "status": "production"
+            }
+          }
+        </script>
       </div>
     </section>
 
@@ -394,28 +328,45 @@
         </div>
         <div class="ach-grid">
           <article class="ach-card reveal">
-            <div class="ach-icon" aria-hidden="true">🏆</div>
-            <h3 class="ach-title" data-i18n="ach-1">2.º Premio Hackathon Sun&Blue Challenge</h3>
-            <p class="ach-desc" data-i18n="ach-desc1">Desarrollo de una solución para abordar el consumo de agua asociado al turismo en la costa mediterránea.</p>
-            <div class="ach-year">2025</div>
-          </article>
-
-          <article class="ach-card reveal">
-            <div class="ach-icon" aria-hidden="true">🏆</div>
+            <div class="ach-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" class="ach-icon-svg">
+                <path d="M8 4h8v3a4 4 0 0 0 4 4v1a5 5 0 0 1-5 5h-1v2h3v2H7v-2h3v-2H9a5 5 0 0 1-5-5v-1a4 4 0 0 0 4-4V4zm-2 2v1a2 2 0 0 1-2 2V7a3 3 0 0 1 2-1zm14 0a3 3 0 0 1 2 1v2a2 2 0 0 1-2-2V6z" />
+              </svg>
+            </div>
             <h3 class="ach-title" data-i18n="ach-2">2.º Premio Hackathon Reto Cosentino</h3>
             <p class="ach-desc" data-i18n="ach-desc2">Dashboard de producción con IA para detectar defectos y analizar brillo y tono de piezas industriales.</p>
             <div class="ach-year">2026</div>
           </article>
 
           <article class="ach-card reveal">
-            <div class="ach-icon" aria-hidden="true">⭐</div>
+            <div class="ach-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" class="ach-icon-svg">
+                <path d="M8 4h8v3a4 4 0 0 0 4 4v1a5 5 0 0 1-5 5h-1v2h3v2H7v-2h3v-2H9a5 5 0 0 1-5-5v-1a4 4 0 0 0 4-4V4zm-2 2v1a2 2 0 0 1-2 2V7a3 3 0 0 1 2-1zm14 0a3 3 0 0 1 2 1v2a2 2 0 0 1-2-2V6z" />
+              </svg>
+            </div>
+            <h3 class="ach-title" data-i18n="ach-1">2.º Premio Hackathon Sun&Blue Challenge</h3>
+            <p class="ach-desc" data-i18n="ach-desc1">Desarrollo de una solución para abordar el consumo de agua asociado al turismo en la costa mediterránea.</p>
+            <div class="ach-year">2025</div>
+          </article>
+
+          <article class="ach-card reveal">
+            <div class="ach-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" class="ach-icon-svg">
+                <path d="M12 3l1.9 4.9L19 10l-4 3.1 1.4 5.1L12 15.5 7.6 18.2 9 13.1 5 10l5.1-2.1L12 3z" />
+              </svg>
+            </div>
             <h3 class="ach-title" data-i18n="ach-3">Matrículas de Honor</h3>
             <p class="ach-desc" data-i18n="ach-desc3">Calificación máxima en Metodología de la Programación y en Cálculo.</p>
             <div class="ach-year">2023</div>
           </article>
 
           <article class="ach-card reveal">
-            <div class="ach-icon" aria-hidden="true">📚</div>
+            <div class="ach-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" class="ach-icon-svg">
+                <path d="M7 3h7l5 5v13H7V3zm7 1.5V9h4.5" />
+                <path d="M9 13h6M9 17h6" />
+              </svg>
+            </div>
             <h3 class="ach-title" data-i18n="ach-4">Diploma de Honor en Bachillerato</h3>
             <p class="ach-desc" data-i18n="ach-desc5">Distinción a la excelencia académica otorgada por IES Sol de Portocarrero.</p>
             <div class="ach-year">2022</div>
@@ -428,11 +379,11 @@
       <div class="container">
         <div class="contact-inner">
           <div class="section-num reveal" data-i18n="cont-num">06 // CONTACTO</div>
-          <h2 class="contact-title reveal" data-i18n-html="cont-title">Disponible para prácticas donde pueda crecer y aportar desde el primer día.</h2>
-          <p class="contact-sub reveal" data-i18n="cont-desc">Si tienes una oportunidad para backend, software engineering o un perfil fullstack con foco técnico, estaré encantado de hablar contigo.</p>
+          <h2 class="contact-title reveal" data-i18n-html="cont-title">En busca de nuevas oportunidades donde pueda aportar valor desde el primer día.</h2>
+          <p class="contact-sub reveal" data-i18n="cont-desc">Si tienes una oportunidad en backend, software engineering o un perfil fullstack con foco técnico, estaré encantado de hablar contigo.</p>
           <div class="contact-pill-row reveal">
             <span class="contact-pill" data-i18n="contact-pill-1">Almería / Remoto</span>
-            <span class="contact-pill" data-i18n="contact-pill-2">Prácticas 2026-2027</span>
+            <span class="contact-pill" data-i18n="contact-pill-2">Abierto a nuevas oportunidades</span>
             <span class="contact-pill" data-i18n="contact-pill-3">Respuesta rápida por email</span>
           </div>
           <a class="contact-email reveal" href="mailto:jcg219@inlumine.ual.es">jcg219@inlumine.ual.es</a>
@@ -448,8 +399,8 @@
   </main>
 
   <footer>
-    <span>© 2026 Javier Campuzano Campuzano</span>
-    <span data-i18n="ft-1">Diseñado y desarrollado en Almería con foco en producto, claridad y código.</span>
+    <span>© 2026 Javier Campuzano García</span>
+    <span data-i18n="ft-1">Diseñado y desarrollado en Almería.</span>
   </footer>
 
   <script src="translations.js" defer></script>

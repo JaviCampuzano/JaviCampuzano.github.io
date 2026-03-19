@@ -3,6 +3,15 @@
 const GITHUB_USERNAME = "JaviCampuzano";
 const MAX_GITHUB_REPOS = 4;
 const PROFILE_LANG = "portfolio_lang";
+const FEATURED_REPOS = [
+  // Add repository names here in the exact order you want them displayed.
+  // Example: "SmartSched", "DevCollab", "CryptoTrack-CLI"
+];
+const README_SECTION_TITLES = {
+  summary: "Portfolio Summary",
+  highlight: "Portfolio Highlight",
+  technologies: "Key Technologies",
+};
 
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 const supportsFinePointer = window.matchMedia("(pointer:fine)").matches;
@@ -13,6 +22,7 @@ const menuToggle = document.getElementById("menu-toggle");
 const navPanel = document.getElementById("nav-panel");
 const sections = [...document.querySelectorAll("section[id]")];
 const navLinks = [...document.querySelectorAll(".nav-links a")];
+const projectOverrides = getProjectOverrides();
 
 let currentLanguage = localStorage.getItem(PROFILE_LANG) || "es";
 
@@ -22,6 +32,18 @@ function getCurrentLanguage() {
 
 function getTranslationValue(lang, key) {
   return translations?.[lang]?.[key];
+}
+
+function getProjectOverrides() {
+  const element = document.getElementById("project-overrides");
+  if (!element) return {};
+
+  try {
+    return JSON.parse(element.textContent || "{}");
+  } catch (error) {
+    console.warn("Invalid project overrides JSON", error);
+    return {};
+  }
 }
 
 function setLanguage(lang) {
@@ -306,22 +328,62 @@ function initBackground() {
   requestAnimationFrame(render);
 }
 
-function buildRepoDescription(repo) {
+function buildRepoDescription(repo, readmeData) {
   const lang = getCurrentLanguage();
   const fallback = getTranslationValue(lang, "js-github-no-desc") || "Sin descripción.";
-  return repo.description || fallback;
+  return readmeData.summary || repo.description || fallback;
 }
 
-function buildRepoTopics(repo) {
-  if (!repo.topics?.length) return "";
-  return repo.topics
-    .slice(0, 4)
-    .map((topic) => `<span class="tech-tag">${topic}</span>`)
+function getPrimaryTechnology(repo, readmeData) {
+  if (readmeData.primaryTechnology) return readmeData.primaryTechnology;
+  if (repo.language) return repo.language;
+  return readmeData.technologies?.[0] || "";
+}
+
+function buildRepoTopics(repo, readmeData) {
+  const technologies = readmeData.technologies?.length ? readmeData.technologies : repo.topics || [];
+  if (!technologies.length) return "";
+  const primaryTechnology = getPrimaryTechnology(repo, readmeData);
+  return technologies
+    .map((topic) => {
+      const isPrimary = primaryTechnology && topic.toLowerCase() === primaryTechnology.toLowerCase();
+      const color = LANG_COLORS[topic] || LANG_COLORS[repo.language] || "#ffffff";
+      return `<span class="tech-tag${isPrimary ? " tech-tag-primary" : ""}"${isPrimary ? ` style="--tag-accent:${color}"` : ""}>${topic}</span>`;
+    })
     .join("");
 }
 
-function buildRepoCard(repo) {
+function getStatusConfig(repo, releaseInfo, readmeData) {
+  const lang = getCurrentLanguage();
+  const override = projectOverrides[repo.name] || {};
+  const readmeStatus = readmeData.meta.status;
+  const status = override.status || readmeStatus || (releaseInfo.hasRelease ? "completed" : "in-progress");
+
+  const statusMap = {
+    "in-progress": {
+      className: "status-active",
+      label: lang === "en" ? "In progress" : "En progreso",
+    },
+    completed: {
+      className: "status-completed",
+      label: lang === "en" ? "Completed" : "Completado",
+    },
+    production: {
+      className: "status-production",
+      label: lang === "en" ? "Production" : "En produccion",
+    },
+  };
+
+  const baseStatus = statusMap[status] || statusMap["in-progress"];
+  return {
+    className: baseStatus.className,
+    label: (lang === "en" ? override.statusLabelEn : override.statusLabelEs) || baseStatus.label,
+  };
+}
+
+function buildRepoCard(repo, readmeData, releaseInfo) {
   const langColor = LANG_COLORS[repo.language] || "#888";
+  const status = getStatusConfig(repo, releaseInfo, readmeData);
   const card = document.createElement("a");
   card.href = repo.html_url;
   card.target = "_blank";
@@ -329,15 +391,17 @@ function buildRepoCard(repo) {
   card.className = "project-card reveal visible";
 
   card.innerHTML = `
-    <span class="project-status status-active">GitHub</span>
+    <span class="project-status ${status.className}">${status.label}</span>
     <h3 class="project-title">${repo.name}</h3>
-    <p class="project-desc">${buildRepoDescription(repo)}</p>
+    <p class="project-desc">${buildRepoDescription(repo, readmeData)}</p>
+    ${readmeData.highlight ? `<p class="project-proof">${readmeData.highlight}</p>` : ""}
     <div class="project-meta">
       ${repo.language ? `<span class="project-meta-item"><span class="project-lang-dot" style="background:${langColor}"></span>${repo.language}</span>` : ""}
       <span class="project-meta-item">★ ${repo.stargazers_count}</span>
       <span class="project-meta-item">↗ ${new Date(repo.updated_at).getFullYear()}</span>
+      ${releaseInfo.latestTag ? `<span class="project-meta-item">${releaseInfo.latestTag}</span>` : ""}
     </div>
-    <div class="project-tech">${buildRepoTopics(repo)}</div>
+    <div class="project-tech">${buildRepoTopics(repo, readmeData)}</div>
   `;
 
   return card;
@@ -370,6 +434,111 @@ function scoreRepo(repo) {
   return signals.reduce((sum, value) => sum + value, 0);
 }
 
+function getFeaturedRepos(repos) {
+  if (!FEATURED_REPOS.length) return null;
+
+  const byName = new Map(repos.map((repo) => [repo.name.toLowerCase(), repo]));
+  return FEATURED_REPOS.map((name) => byName.get(name.toLowerCase())).filter(Boolean);
+}
+
+function normalizeRepoOverride(name) {
+  return projectOverrides[name] || projectOverrides[name.toLowerCase()] || {};
+}
+
+function extractSection(markdown, title) {
+  const escaped = title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const regex = new RegExp(`##\\s+${escaped}\\s*\\n([\\s\\S]*?)(?=\\n##\\s+|$)`, "i");
+  const match = markdown.match(regex);
+  return match ? match[1].trim() : "";
+}
+
+function stripMarkdown(text) {
+  return text
+    .replace(/!\[[^\]]*\]\([^)]+\)/g, "")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/[*_>#-]/g, "")
+    .replace(/\n+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function parseMetaBlock(markdown) {
+  const match = markdown.match(/<!--\s*PORTFOLIO([\s\S]*?)-->/i);
+  if (!match) return {};
+
+  return match[1]
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .reduce((acc, line) => {
+      const [rawKey, ...rest] = line.split(":");
+      if (!rawKey || !rest.length) return acc;
+      acc[rawKey.trim()] = rest.join(":").trim();
+      return acc;
+    }, {});
+}
+
+function parseTechnologyList(section) {
+  return section
+    .split("\n")
+    .map((line) => line.replace(/^[-*]\s*/, "").trim())
+    .filter(Boolean);
+}
+
+function parseReadme(markdown) {
+  if (!markdown) {
+    return { summary: "", highlight: "", technologies: [], meta: {}, primaryTechnology: "" };
+  }
+
+  const meta = parseMetaBlock(markdown);
+  const summary = stripMarkdown(extractSection(markdown, README_SECTION_TITLES.summary));
+  const highlight = stripMarkdown(extractSection(markdown, README_SECTION_TITLES.highlight));
+  const sectionTechnologies = parseTechnologyList(extractSection(markdown, README_SECTION_TITLES.technologies));
+  const metaTechnologies = meta.tech ? meta.tech.split(",").map((item) => item.trim()).filter(Boolean) : [];
+  const primaryTechnology = meta.primaryTech || meta.primary || "";
+
+  return {
+    summary,
+    highlight,
+    technologies: sectionTechnologies.length ? sectionTechnologies : metaTechnologies,
+    meta,
+    primaryTechnology,
+  };
+}
+
+async function fetchReadme(repo) {
+  try {
+    const response = await fetch(`https://api.github.com/repos/${repo.owner.login}/${repo.name}/readme`, {
+      headers: { Accept: "application/vnd.github.raw+json" },
+    });
+    if (!response.ok) return { summary: "", highlight: "", technologies: [], meta: {} };
+    const markdown = await response.text();
+    return parseReadme(markdown);
+  } catch (error) {
+    return { summary: "", highlight: "", technologies: [], meta: {} };
+  }
+}
+
+async function fetchReleaseInfo(repo) {
+  try {
+    const response = await fetch(`https://api.github.com/repos/${repo.owner.login}/${repo.name}/releases?per_page=1`);
+    if (!response.ok) return { hasRelease: false, latestTag: "" };
+    const releases = await response.json();
+    return {
+      hasRelease: releases.length > 0,
+      latestTag: releases[0]?.tag_name || "",
+    };
+  } catch (error) {
+    return { hasRelease: false, latestTag: "" };
+  }
+}
+
+async function enrichRepo(repo) {
+  const [readmeData, releaseInfo] = await Promise.all([fetchReadme(repo), fetchReleaseInfo(repo)]);
+  return { repo, readmeData, releaseInfo };
+}
+
 async function loadGitHubRepos() {
   const grid = document.getElementById("github-projects");
   if (!grid) return;
@@ -382,10 +551,11 @@ async function loadGitHubRepos() {
     if (!response.ok) throw new Error("GitHub API error");
 
     const repos = await response.json();
-    const curatedRepos = repos
-      .filter((repo) => !repo.fork && !repo.archived && repo.name.toLowerCase() !== GITHUB_USERNAME.toLowerCase())
+    const cleanRepos = repos.filter((repo) => !repo.archived && repo.name.toLowerCase() !== GITHUB_USERNAME.toLowerCase());
+    const featuredRepos = getFeaturedRepos(cleanRepos);
+    const curatedRepos = (featuredRepos && featuredRepos.length ? featuredRepos : cleanRepos
       .sort((a, b) => scoreRepo(b) - scoreRepo(a) || new Date(b.updated_at) - new Date(a.updated_at))
-      .slice(0, MAX_GITHUB_REPOS);
+      .slice(0, MAX_GITHUB_REPOS));
 
     grid.innerHTML = "";
 
@@ -394,7 +564,10 @@ async function loadGitHubRepos() {
       return;
     }
 
-    curatedRepos.forEach((repo) => grid.appendChild(buildRepoCard(repo)));
+    const enrichedRepos = await Promise.all(curatedRepos.map((repo) => enrichRepo(repo)));
+    enrichedRepos.forEach(({ repo, readmeData, releaseInfo }) => {
+      grid.appendChild(buildRepoCard(repo, readmeData, releaseInfo));
+    });
   } catch (error) {
     grid.innerHTML = `<div class="github-loading">${getTranslationValue(lang, "js-github-error")}</div>`;
     console.error("Error loading repositories", error);
