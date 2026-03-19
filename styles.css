@@ -775,6 +775,11 @@ section {
 
 .ach-card {
   text-align: left;
+  width: 100%;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
 }
 
 .ach-icon {
@@ -805,6 +810,61 @@ section {
   font-family: "Space Mono", monospace;
   font-size: 0.72rem;
   text-transform: uppercase;
+}
+
+.achievement-modal[hidden] {
+  display: none;
+}
+
+.achievement-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+}
+
+.achievement-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 8, 8, 0.78);
+  backdrop-filter: blur(8px);
+}
+
+.achievement-modal-dialog {
+  position: relative;
+  width: min(760px, calc(100% - 2rem));
+  max-height: calc(100vh - 3rem);
+  margin: 1.5rem auto;
+  padding: 1.8rem;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: rgba(14, 14, 14, 0.96);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+}
+
+.achievement-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.achievement-modal-content h3 {
+  margin: 0 2.5rem 1rem 0;
+  font-size: 1.5rem;
+}
+
+.achievement-modal-content p {
+  margin: 0.9rem 0 0;
+  color: var(--text-soft);
+  line-height: 1.75;
 }
 
 #contact {

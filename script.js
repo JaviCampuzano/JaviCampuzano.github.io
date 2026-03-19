@@ -25,6 +25,8 @@ const navPanel = document.getElementById("nav-panel");
 const sections = [...document.querySelectorAll("section[id]")];
 const navLinks = [...document.querySelectorAll(".nav-links a")];
 const projectOverrides = getProjectOverrides();
+const achievementModal = document.getElementById("achievement-modal");
+const achievementModalContent = document.getElementById("achievement-modal-content");
 let cachedGitHubProjects = null;
 
 let currentLanguage = localStorage.getItem(PROFILE_LANG) || "es";
@@ -329,6 +331,37 @@ function initBackground() {
   };
 
   requestAnimationFrame(render);
+}
+
+function initAchievementModal() {
+  if (!achievementModal || !achievementModalContent) return;
+
+  const closeModal = () => {
+    achievementModal.hidden = true;
+    achievementModalContent.innerHTML = "";
+    document.body.classList.remove("menu-open");
+  };
+
+  document.querySelectorAll(".ach-card[data-achievement]").forEach((card) => {
+    card.addEventListener("click", () => {
+      const targetId = `achievement-${card.dataset.achievement}`;
+      const source = document.getElementById(targetId);
+      if (!source) return;
+      achievementModalContent.innerHTML = source.innerHTML;
+      achievementModal.hidden = false;
+      document.body.classList.add("menu-open");
+    });
+  });
+
+  achievementModal.querySelectorAll("[data-close-achievement-modal]").forEach((element) => {
+    element.addEventListener("click", closeModal);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !achievementModal.hidden) {
+      closeModal();
+    }
+  });
 }
 
 function buildRepoDescription(repo, readmeData) {
@@ -642,6 +675,7 @@ async function loadGitHubRepos() {
 function init() {
   initLanguageSwitcher();
   initMobileMenu();
+  initAchievementModal();
   initCustomCursor();
   initRevealAnimations();
   initSkillBars();
