@@ -3,6 +3,8 @@
 const GITHUB_USERNAME = "JaviCampuzano";
 const MAX_GITHUB_REPOS = 4;
 const PROFILE_LANG = "portfolio_lang";
+const GITHUB_CACHE_KEY = "portfolio_github_cache_v1";
+const GITHUB_CACHE_TTL_MS = 1000 * 60 * 60;
 const FEATURED_REPOS = [
   // Add repository names here in the exact order you want them displayed.
   // Example: "SmartSched", "DevCollab", "CryptoTrack-CLI"
@@ -23,6 +25,7 @@ const navPanel = document.getElementById("nav-panel");
 const sections = [...document.querySelectorAll("section[id]")];
 const navLinks = [...document.querySelectorAll(".nav-links a")];
 const projectOverrides = getProjectOverrides();
+let cachedGitHubProjects = null;
 
 let currentLanguage = localStorage.getItem(PROFILE_LANG) || "es";
 
@@ -80,7 +83,7 @@ function initLanguageSwitcher() {
   document.querySelectorAll(".lang-switch button").forEach((button) => {
     button.addEventListener("click", () => {
       setLanguage(button.dataset.lang);
-      loadGitHubRepos();
+      renderGitHubProjects();
     });
   });
 
@@ -407,6 +410,23 @@ function buildRepoCard(repo, readmeData, releaseInfo) {
   return card;
 }
 
+function renderGitHubProjects() {
+  const grid = document.getElementById("github-projects");
+  if (!grid) return;
+
+  const lang = getCurrentLanguage();
+
+  if (!cachedGitHubProjects?.length) {
+    grid.innerHTML = `<div class="github-loading">${getTranslationValue(lang, "js-github-not-found")}</div>`;
+    return;
+  }
+
+  grid.innerHTML = "";
+  cachedGitHubProjects.forEach(({ repo, readmeData, releaseInfo }) => {
+    grid.appendChild(buildRepoCard(repo, readmeData, releaseInfo));
+  });
+}
+
 const LANG_COLORS = {
   JavaScript: "#f1e05a",
   TypeScript: "#3178c6",
@@ -539,12 +559,50 @@ async function enrichRepo(repo) {
   return { repo, readmeData, releaseInfo };
 }
 
+function readGitHubCache() {
+  try {
+    const raw = localStorage.getItem(GITHUB_CACHE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed.savedAt || !Array.isArray(parsed.items)) return null;
+    return parsed;
+  } catch (error) {
+    return null;
+  }
+}
+
+function writeGitHubCache(items) {
+  try {
+    localStorage.setItem(
+      GITHUB_CACHE_KEY,
+      JSON.stringify({
+        savedAt: Date.now(),
+        items,
+      })
+    );
+  } catch (error) {
+    // Ignore storage failures.
+  }
+}
+
 async function loadGitHubRepos() {
   const grid = document.getElementById("github-projects");
   if (!grid) return;
 
   const lang = getCurrentLanguage();
-  grid.innerHTML = `<div class="github-loading">${getTranslationValue(lang, "js-github-loading")}</div>`;
+  const storedCache = readGitHubCache();
+  const hasValidCache = storedCache?.items?.length;
+  const isFreshCache = hasValidCache && Date.now() - storedCache.savedAt < GITHUB_CACHE_TTL_MS;
+
+  if (hasValidCache) {
+    cachedGitHubProjects = storedCache.items;
+    renderGitHubProjects();
+    if (isFreshCache) return;
+  }
+
+  if (!hasValidCache) {
+    grid.innerHTML = `<div class="github-loading">${getTranslationValue(lang, "js-github-loading")}</div>`;
+  }
 
   try {
     const response = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=100&type=owner`);
@@ -565,10 +623,17 @@ async function loadGitHubRepos() {
     }
 
     const enrichedRepos = await Promise.all(curatedRepos.map((repo) => enrichRepo(repo)));
-    enrichedRepos.forEach(({ repo, readmeData, releaseInfo }) => {
-      grid.appendChild(buildRepoCard(repo, readmeData, releaseInfo));
-    });
+    cachedGitHubProjects = enrichedRepos;
+    writeGitHubCache(enrichedRepos);
+    renderGitHubProjects();
   } catch (error) {
+    const fallbackCache = readGitHubCache();
+    if (fallbackCache?.items?.length) {
+      cachedGitHubProjects = fallbackCache.items;
+      renderGitHubProjects();
+      return;
+    }
+
     grid.innerHTML = `<div class="github-loading">${getTranslationValue(lang, "js-github-error")}</div>`;
     console.error("Error loading repositories", error);
   }
