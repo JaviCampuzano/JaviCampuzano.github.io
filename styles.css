@@ -40,6 +40,21 @@ nav {
   font-family:'Space Mono',monospace; font-size:.85rem; color:var(--accent);
   letter-spacing:.15em; text-transform:uppercase;
 }
+.nav-right {
+  display: flex; align-items: center; gap: 2rem;
+}
+.lang-switch {
+  display: flex; gap: 0.5rem;
+}
+.lang-switch button {
+  background: transparent; border: 1px solid var(--border);
+  color: var(--muted); font-family: 'Space Mono', monospace;
+  font-size: 0.7rem; padding: 0.3rem 0.6rem; border-radius: 4px;
+  cursor: none; transition: all 0.2s;
+}
+.lang-switch button.active, .lang-switch button:hover {
+  color: var(--accent); border-color: var(--accent); background: rgba(255,255,255,0.05);
+}
 .nav-links { display:flex; gap:2rem; list-style:none; }
 .nav-links a {
   font-family:'Space Mono',monospace; font-size:.75rem; color:var(--muted);

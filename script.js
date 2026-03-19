@@ -7,6 +7,35 @@
    ───────────────────────────── */
 const GITHUB_USERNAME = 'JaviCampuzano'; // ← Tu usuario de GitHub
 
+/* ── Language Switcher ── */
+function setLanguage(lang) {
+  if (!translations || !translations[lang]) return;
+
+  // Update HTML lang attribute
+  document.documentElement.lang = lang;
+
+  // Update text
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (translations[lang][key]) {
+      el.innerHTML = translations[lang][key];
+    }
+  });
+
+  // Update Buttons
+  document.getElementById('btn-es').classList.toggle('active', lang === 'es');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+
+  // Save preference
+  localStorage.setItem('portfolio_lang', lang);
+}
+
+// Initialize Language
+document.addEventListener('DOMContentLoaded', () => {
+  const savedLang = localStorage.getItem('portfolio_lang') || 'es';
+  setLanguage(savedLang);
+});
+
 /* ── Custom Cursor ── */
 const cursor = document.getElementById('cursor');
 const ring = document.getElementById('cursor-ring');
@@ -322,7 +351,7 @@ async function loadGitHubRepos() {
   const grid = document.getElementById('github-projects');
   if (!grid) return;
 
-  grid.innerHTML = '<div class="github-loading">Cargando repositorios de GitHub...</div>';
+  grid.innerHTML = '<div class="github-loading" data-i18n="js-github-load">Cargando repositorios de GitHub...</div>';
 
   try {
     const res = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=100&type=owner`);
@@ -337,7 +366,7 @@ async function loadGitHubRepos() {
     grid.innerHTML = '';
 
     if (filtered.length === 0) {
-      grid.innerHTML = '<div class="github-loading">No se encontraron repositorios públicos.</div>';
+      grid.innerHTML = '<div class="github-loading" data-i18n="js-github-not-found">No se encontraron repositorios públicos.</div>';
       return;
     }
 
@@ -352,7 +381,7 @@ async function loadGitHubRepos() {
       card.innerHTML = `
         <span class="project-status status-active">GitHub</span>
         <div class="project-title">${repo.name}</div>
-        <div class="project-desc">${repo.description || 'Sin descripción.'}</div>
+        <div class="project-desc">${repo.description || '<span data-i18n="js-github-no-desc">Sin descripción.</span>'}</div>
         <div class="project-meta">
           ${repo.language ? `<span class="project-meta-item"><span class="project-lang-dot" style="background:${langColor}"></span>${repo.language}</span>` : ''}
           <span class="project-meta-item">⭐ ${repo.stargazers_count}</span>
@@ -385,9 +414,13 @@ async function loadGitHubRepos() {
       card.addEventListener('mouseleave', () => { cursor.style.transform='translate(-50%,-50%) scale(1)'; ring.style.width='36px'; ring.style.height='36px'; });
     });
 
+    // Translate dynamic content
+    setLanguage(document.documentElement.lang || localStorage.getItem('portfolio_lang') || 'es');
+
   } catch (err) {
     console.error('Error loading GitHub repos:', err);
-    grid.innerHTML = '<div class="github-loading">Error al cargar repositorios. Los proyectos manuales se muestran arriba.</div>';
+    grid.innerHTML = '<div class="github-loading" data-i18n="js-github-error">Error al cargar repositorios. Los proyectos manuales se muestran arriba.</div>';
+    setLanguage(document.documentElement.lang || localStorage.getItem('portfolio_lang') || 'es');
   }
 }
 
